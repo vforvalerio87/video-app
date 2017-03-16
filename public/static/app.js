@@ -3,18 +3,18 @@
 
   const root = document.getElementById('root')
 
-  function goToUrl (url) {
+  function goToUrl(url) {
     if (url === '/') getIndexPage()
     else getSingleVideoPage(url)
   }
 
   window.onpopstate = (e) => { goToUrl(e.target.location.pathname) }
 
-  function loadElement (element) { root.appendChild(element) }
+  function loadElement(element) { root.appendChild(element) }
 
-  function clearPage () { while (root.hasChildNodes()) root.removeChild(root.firstChild) }
+  function clearPage() { while (root.hasChildNodes()) root.removeChild(root.firstChild) }
 
-  function createGoToIndexButton () {
+  function createGoToIndexButton() {
     const button = document.createElement('button')
     button.innerHTML = 'Go to index'
     button.addEventListener('click', (e) => {
@@ -25,7 +25,7 @@
     return button
   }
 
-  function createGoToVideoButton (url, poster) {
+  function createGoToVideoButton(url, poster) {
     const videoThumb = document.createElement('img')
     videoThumb.setAttribute('src', poster)
     videoThumb.setAttribute('width', '640')
@@ -45,7 +45,7 @@
     return div
   }
 
-  function createVideoComponent (videoData) {
+  function createVideoComponent(videoData) {
     const video = document.createElement('video')
     video.setAttribute('id', videoData.id)
     video.setAttribute('poster', videoData.poster)
@@ -65,10 +65,10 @@
     return video
   }
 
-  async function getIndexPage () { try {
+  async function getIndexPage() { try {
     clearPage()
     const response = await fetch('./api/index.json')
-    if (response.status !== 200) throw response.status
+    if (response.status >= 400) throw response.status
     const responseJSON = await response.json()
     const title = document.createElement('h1')
     const div = document.createElement('div')
@@ -77,15 +77,12 @@
       div.appendChild(createGoToVideoButton('/' + videoDataObject.id, videoDataObject.poster))
     })
     loadElement(div)
-  } catch (e) {
-    if (e === 404) { get404Page() }
-    throw new Error(e)
-  } }
+  } catch (e) { getErrorPage(e) } }
 
-  async function getSingleVideoPage (url) { try {
+  async function getSingleVideoPage(url) { try {
     clearPage()
-    const response = await fetch(`/api${url}.json`)
-    if (response.status !== 200) throw response.status
+    const response = await fetch(`./api${url}.json`)
+    if (response.status >= 400) throw response.status
     const videoData = (await response.json()).data
     const title = document.createElement('h1')
     const div = document.createElement('div')
@@ -94,16 +91,13 @@
     div.appendChild(createGoToIndexButton())
     loadElement(div)
     window.videojs(document.getElementById(videoData.id))
-  } catch(e) {
-    if (e === 404) { get404Page() }
-    throw new Error(e)
-  } }
+  } catch(e) { getErrorPage(e) } }
 
-  function get404Page () {
+  function getErrorPage(error) {
     clearPage()
     const notFound = document.createElement('h1')
     const div = document.createElement('div')
-    div.appendChild(notFound).innerHTML = '404'
+    div.appendChild(notFound).innerHTML = error
     div.appendChild(createGoToIndexButton())
     loadElement(div)
   }

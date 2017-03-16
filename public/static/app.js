@@ -26,22 +26,22 @@
   }
 
   const createGoToVideoButton = (url, poster) => {
-    const div = document.createElement('div')
-    const a = document.createElement('a')
     const videoThumb = document.createElement('img')
     videoThumb.setAttribute('src', poster)
     videoThumb.setAttribute('width', '640')
     videoThumb.setAttribute('height', 'auto')
     videoThumb.style.maxWidth = '100%'
     videoThumb.style.maxHeight = '264'
+    const a = document.createElement('a')
     a.setAttribute('href', url)
     a.addEventListener('click', (e) => {
       e.preventDefault()
       goToUrl(url)
       window.history.pushState(null, '', url)
     })
-    a.appendChild(videoThumb)
+    const div = document.createElement('div')
     div.appendChild(a)
+      .appendChild(videoThumb)
     return div
   }
 
@@ -67,29 +67,46 @@
 
   const getIndexPage = async () => { try {
     clearPage()
-    const div = document.createElement('div')
+    const response = await fetch('./api/index.json')
+    if (response.status !== 200) throw response.status
+    const responseJSON = await response.json()
     const title = document.createElement('h1')
-    title.innerHTML = 'Welcome to my site'
-    div.appendChild(title)
-    const responseJSON = await (await fetch('./api/index.json')).json()
+    const div = document.createElement('div')
+    div.appendChild(title).innerHTML = 'Welcome to my site'
     responseJSON.data.forEach(videoDataObject => {
       div.appendChild(createGoToVideoButton('/' + videoDataObject.id, videoDataObject.poster))
     })
     loadElement(div)
-  } catch (e) { throw new Error(e) } }
+  } catch (e) {
+    if (e === 404) { get404Page() }
+    throw new Error(e)
+  } }
 
   const getSingleVideoPage = async (url) => { try {
     clearPage()
-    const div = document.createElement('div')
+    const response = await fetch(`/api${url}.json`)
+    if (response.status !== 200) throw response.status
+    const videoData = (await response.json()).data
     const title = document.createElement('h1')
-    title.innerHTML = url.substring(1)
-    div.appendChild(title)
-    const videoData = (await (await fetch('/api' + url + '.json')).json()).data
+    const div = document.createElement('div')
+    div.appendChild(title).innerHTML = url.substring(1)
     div.appendChild(createVideoComponent(videoData))
     div.appendChild(createGoToIndexButton())
     loadElement(div)
     window.videojs(document.getElementById(videoData.id))
-  } catch(e) { throw new Error(e) } }
+  } catch(e) {
+    if (e === 404) { get404Page() }
+    throw new Error(e)
+  } }
+
+  const get404Page = () => {
+    clearPage()
+    const notFound = document.createElement('h1')
+    const div = document.createElement('div')
+    div.appendChild(notFound).innerHTML = '404'
+    div.appendChild(createGoToIndexButton())
+    loadElement(div)
+  }
 
   const initialUrl = document.location.pathname
   window.history.replaceState({state: 'initialState'}, '', initialUrl)

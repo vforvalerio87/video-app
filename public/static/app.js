@@ -19,13 +19,23 @@
 
   async function getIndexPage() { try {
     clearPage()
-    const response = await fetch('./api/index.json')
-    if (response.status >= 400) throw response.status
-    const responseJSON = await response.json()
-    const title = document.createElement('h1')
+    const [indexResponse, titleResponse] = await Promise.all([
+      fetch('./api/index.json'),
+      fetch('http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1')
+    ])
+    if (indexResponse.status >= 400) throw indexResponse.status
+    const [indexJSON, titleJSON] = await Promise.all([
+      indexResponse.json(),
+      titleResponse.json()
+    ])
+    const { content: quote, title: author } = titleJSON.find(element => element)
     const div = document.createElement('div')
-    div.appendChild(title).innerHTML = 'Welcome to my site'
-    responseJSON.data.forEach(videoDataObject => {
+    if (quote) {
+      div.appendChild(document.createElement('h1')).innerHTML = 'Quote of the day'
+      div.appendChild(document.createElement('h2')).innerHTML = quote
+      if (author) div.appendChild(document.createElement('h3')).innerHTML = author
+    } else { div.appendChild(document.createElement('h1')).innerHTML = 'No quote today :(' }
+    indexJSON.data.forEach(videoDataObject => {
       div.appendChild(createGoToVideoButton('/' + videoDataObject.id, videoDataObject.poster))
     })
     loadElement(div)
@@ -36,9 +46,8 @@
     const response = await fetch(`./api${url}.json`)
     if (response.status >= 400) throw response.status
     const videoData = (await response.json()).data
-    const title = document.createElement('h1')
     const div = document.createElement('div')
-    div.appendChild(title).innerHTML = url.substring(1)
+    div.appendChild(document.createElement('h1')).innerHTML = url.substring(1)
     div.appendChild(createVideoComponent(videoData))
     div.appendChild(createGoToIndexButton())
     loadElement(div)
@@ -47,9 +56,8 @@
 
   function getErrorPage(error) {
     clearPage()
-    const notFound = document.createElement('h1')
     const div = document.createElement('div')
-    div.appendChild(notFound).innerHTML = error
+    div.appendChild(document.createElement('h1')).innerHTML = error
     div.appendChild(createGoToIndexButton())
     loadElement(div)
   }

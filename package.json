@@ -1,0 +1,19 @@
+{
+  "name": "video-app",
+  "version": "1.0.0",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vforvalerio87/video-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vforvalerio87/video-app/issues"
+  },
+  "homepage": "https://github.com/vforvalerio87/video-app#readme",
+  "devDependencies": {
+    "express": "^4.15.2"
+  }
+}

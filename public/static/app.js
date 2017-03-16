@@ -65,7 +65,7 @@
     return video
   }
 
-  const getIndexPage = async () => {
+  const getIndexPage = async () => { try {
     clearPage()
     const div = document.createElement('div')
     const title = document.createElement('h1')
@@ -76,9 +76,9 @@
       div.appendChild(createGoToVideoButton('/' + videoDataObject.id, videoDataObject.poster))
     })
     loadElement(div)
-  }
+  } catch (e) { throw new Error(e) } }
 
-  const getSingleVideoPage = async (url) => {
+  const getSingleVideoPage = async (url) => { try {
     clearPage()
     const div = document.createElement('div')
     const title = document.createElement('h1')
@@ -89,7 +89,7 @@
     div.appendChild(createGoToIndexButton())
     loadElement(div)
     window.videojs(document.getElementById(videoData.id))
-  }
+  } catch(e) { throw new Error(e) } }
 
   const initialUrl = document.location.pathname
   window.history.replaceState({state: 'initialState'}, '', initialUrl)

@@ -28,7 +28,7 @@
       indexResponse.json(),
       titleResponse.json()
     ])
-    const { content: quote, title: author } = titleJSON.find(element => element)
+    const { content: quote, title: author } = titleJSON.find(object => object)
     const div = document.createElement('div')
     if (quote) {
       div.appendChild(document.createElement('h1')).innerHTML = 'Quote of the day'

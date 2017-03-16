@@ -1,0 +1,20 @@
+{
+  "data": [
+    {
+      "id": "oceans",
+      "poster": "http://public.valerioversace.it/video-app-tutorial/images/oceans.jpeg"
+    },
+    {
+      "id": "kuala-lumpur",
+      "poster": "http://public.valerioversace.it/video-app-tutorial/images/kuala_lumpur.jpeg"
+    },
+    {
+      "id": "snow",
+      "poster": "http://public.valerioversace.it/video-app-tutorial/images/snow.jpeg"
+    },
+    {
+      "id": "statue-of-liberty",
+      "poster": "http://public.valerioversace.it/video-app-tutorial/images/statue_of_liberty.jpeg"
+    }
+  ]
+}

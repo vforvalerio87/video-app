@@ -1,0 +1,10 @@
+{
+  "data": {
+    "id": "oceans",
+    "poster": "http://public.valerioversace.it/video-app-tutorial/images/oceans.jpeg",
+    "sources": {
+      "video/mp4": "http://public.valerioversace.it/video-app-tutorial/videos/oceans.mp4",
+      "video/webm": "http://public.valerioversace.it/video-app-tutorial/videos/oceans.webm"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "data": {
+    "id": "snow",
+    "poster": "http://public.valerioversace.it/video-app-tutorial/images/snow.jpeg",
+    "sources": {
+      "video/mp4": "http://public.valerioversace.it/video-app-tutorial/videos/snow.mp4"
+    }
+  }
+}

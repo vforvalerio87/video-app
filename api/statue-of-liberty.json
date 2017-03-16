@@ -1,0 +1,9 @@
+{
+  "data": {
+    "id": "statue-of-liberty",
+    "poster": "http://public.valerioversace.it/video-app-tutorial/images/statue_of_liberty.jpeg",
+    "sources": {
+      "video/mp4": "http://public.valerioversace.it/video-app-tutorial/videos/statue_of_liberty.mp4"
+    }
+  }
+}

@@ -3,18 +3,18 @@
 
   const root = document.getElementById('root')
 
-  const goToUrl = (url) => {
+  function goToUrl (url) {
     if (url === '/') getIndexPage()
     else getSingleVideoPage(url)
   }
 
   window.onpopstate = (e) => { goToUrl(e.target.location.pathname) }
 
-  const loadElement = (element) => { root.appendChild(element) }
+  function loadElement (element) { root.appendChild(element) }
 
-  const clearPage = () => { while (root.hasChildNodes()) root.removeChild(root.firstChild) }
+  function clearPage () { while (root.hasChildNodes()) root.removeChild(root.firstChild) }
 
-  const createGoToIndexButton = () => {
+  function createGoToIndexButton () {
     const button = document.createElement('button')
     button.innerHTML = 'Go to index'
     button.addEventListener('click', (e) => {
@@ -25,7 +25,7 @@
     return button
   }
 
-  const createGoToVideoButton = (url, poster) => {
+  function createGoToVideoButton (url, poster) {
     const videoThumb = document.createElement('img')
     videoThumb.setAttribute('src', poster)
     videoThumb.setAttribute('width', '640')
@@ -45,7 +45,7 @@
     return div
   }
 
-  const createVideoComponent = (videoData) => {
+  function createVideoComponent (videoData) {
     const video = document.createElement('video')
     video.setAttribute('id', videoData.id)
     video.setAttribute('poster', videoData.poster)
@@ -65,7 +65,7 @@
     return video
   }
 
-  const getIndexPage = async () => { try {
+  async function getIndexPage () { try {
     clearPage()
     const response = await fetch('./api/index.json')
     if (response.status !== 200) throw response.status
@@ -82,7 +82,7 @@
     throw new Error(e)
   } }
 
-  const getSingleVideoPage = async (url) => { try {
+  async function getSingleVideoPage (url) { try {
     clearPage()
     const response = await fetch(`/api${url}.json`)
     if (response.status !== 200) throw response.status
@@ -99,7 +99,7 @@
     throw new Error(e)
   } }
 
-  const get404Page = () => {
+  function get404Page () {
     clearPage()
     const notFound = document.createElement('h1')
     const div = document.createElement('div')

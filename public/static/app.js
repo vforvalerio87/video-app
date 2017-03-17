@@ -22,22 +22,23 @@
     clearPage()
     loadElement(document.createElement('p')).innerHTML = 'Loading...'
     const titlePromise = quotesCache.length ?
-      quotesCache :
+      Promise.resolve(quotesCache) :
       fetch(
         'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',
         { cache: 'no-cache' }
       )
-    const [indexResponse, titleResponse] = await Promise.all([
-      fetch('./api/index.json'),
-      titlePromise
-    ])
-    if (indexResponse.status >= 400) throw indexResponse.status
-    const titleJSONPromise = Array.isArray(titleResponse) ?
-      quotesCache :
-      titleResponse.json()
     const [indexJSON, titleJSON] = await Promise.all([
-      indexResponse.json(),
-      titleJSONPromise
+      fetch('./api/index.json')
+        .then(response => {
+          if (response.status >= 400) throw response.status
+          return response.json()
+        }),
+      (() => titlePromise
+        .then(response => {
+          if (Array.isArray(response)) return response
+          else return response.json()
+        })
+      )()
     ])
     if (!quotesCache.length) quotesCache = titleJSON
     const currentQuote = quotesCache[Math.floor(Math.random() * quotesCache.length)]

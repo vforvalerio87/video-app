@@ -21,27 +21,27 @@
   async function getIndexPage() { try {
     clearPage()
     loadElement(document.createElement('p')).innerHTML = 'Loading...'
+    const titlePromise = !quotesCache.length ?
+      quotesCache :
+      fetch(
+        'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',
+        { cache: 'no-cache' }
+      )
     const [indexResponse, titleResponse] = await Promise.all([
       fetch('./api/index.json'),
-      (() => {
-        if (!quotesCache.length) { return fetch(
-          'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',
-          { cache: 'no-cache' }
-        )} else { return new Promise(resolve => {
-          resolve(quotesCache)
-        })}
-      })()
+      titlePromise
     ])
     if (indexResponse.status >= 400) throw indexResponse.status
+    const titleJSONPromise = Array.isArray(titleResponse) ?
+      quotesCache :
+      titleResponse.json()
     const [indexJSON, titleJSON] = await Promise.all([
       indexResponse.json(),
-      (() => {
-        if (Array.isArray(titleResponse)) return titleResponse
-        else return titleResponse.json()
-      })()
+      titleJSONPromise
     ])
     if (!quotesCache.length) quotesCache = titleJSON
     const currentQuote = quotesCache[Math.floor(Math.random() * quotesCache.length)]
+    console.log(quotesCache)
     quotesCache = quotesCache.slice(0, quotesCache.indexOf(currentQuote)).concat(quotesCache.slice(quotesCache.indexOf(currentQuote) +1, quotesCache.length))
     const { content: quote, title: author } = currentQuote
     const div = document.createElement('div')
@@ -55,10 +55,11 @@
     })
     clearPage()
     loadElement(div)
-    if (!quotesCache.length) quotesCache = await (await fetch(
+    if (quotesCache.length < 3) quotesCache = await (await fetch(
       'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',
       { cache: 'no-cache' }
     )).json()
+    console.log(quotesCache)
   } catch (e) { getErrorPage(e) } }
 
   async function getSingleVideoPage(url) { try {

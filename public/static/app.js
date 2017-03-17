@@ -47,7 +47,7 @@
     })
     clearPage()
     loadElement(div)
-    if (quotesCache.length < 3) quotesCache = await (await fetch(quotesUrl, { cache: 'no-cache' })).json()
+    if (quotesCache.length <3) quotesCache = await (await fetch(quotesUrl, { cache: 'no-cache' })).json()
   } catch (e) { getErrorPage(e) } }
 
   async function getSingleVideoPage(url) { try {

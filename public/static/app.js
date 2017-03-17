@@ -4,6 +4,7 @@
   const root = document.getElementById('root')
   const initialUrl = document.location.pathname
   let quotesCache = []
+  const quotesUrl = 'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10'
   window.history.replaceState({state: 'initialState'}, '', initialUrl)
   window.onpopstate = (e) => { goToUrl(e.target.location.pathname) }
 
@@ -22,23 +23,14 @@
     clearPage()
     loadElement(document.createElement('p')).innerHTML = 'Loading...'
     const titlePromise = quotesCache.length ?
-      Promise.resolve(quotesCache) :
-      fetch(
-        'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',
-        { cache: 'no-cache' }
-      )
+      Promise.resolve(new Response(new Blob([JSON.stringify(quotesCache)], {type: 'application/json'}))) :
+      fetch(quotesUrl, { cache: 'no-cache' })
     const [indexJSON, titleJSON] = await Promise.all([
-      fetch('./api/index.json')
-        .then(response => {
-          if (response.status >= 400) throw response.status
-          return response.json()
-        }),
-      (() => titlePromise
-        .then(response => {
-          if (Array.isArray(response)) return response
-          else return response.json()
-        })
-      )()
+      fetch('./api/index.json').then(response => {
+        if (response.status >= 400) throw response.status
+        return response.json()
+      }),
+      titlePromise.then(response => response.json())
     ])
     if (!quotesCache.length) quotesCache = titleJSON
     const currentQuote = quotesCache[Math.floor(Math.random() * quotesCache.length)]
@@ -55,25 +47,23 @@
     })
     clearPage()
     loadElement(div)
-    if (quotesCache.length < 3) quotesCache = await (await fetch(
-      'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',
-      { cache: 'no-cache' }
-    )).json()
+    if (quotesCache.length < 3) quotesCache = await (await fetch(quotesUrl, { cache: 'no-cache' })).json()
   } catch (e) { getErrorPage(e) } }
 
   async function getSingleVideoPage(url) { try {
     clearPage()
     loadElement(document.createElement('p')).innerHTML = 'Loading...'
-    const response = await fetch(`./api${url}.json`)
-    if (response.status >= 400) throw response.status
-    const videoData = (await response.json()).data
+    const videoObject = await fetch(`./api${url}.json`).then(response => {
+      if (response.status >= 400) throw response.status
+      return response.json()
+    })
     const div = document.createElement('div')
     div.appendChild(document.createElement('h1')).innerHTML = url.substring(1)
-    div.appendChild(createVideoComponent(videoData))
+    div.appendChild(createVideoComponent(videoObject.data))
     div.appendChild(createGoToIndexButton())
     clearPage()
     loadElement(div)
-    window.videojs(document.getElementById(videoData.id))
+    if (window.videojs) window.videojs(document.getElementById(videoObject.data.id))
   } catch(e) { getErrorPage(e) } }
 
   function getErrorPage(error) {

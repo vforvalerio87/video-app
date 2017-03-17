@@ -15,13 +15,17 @@
 
   function clearPage() { while (root.hasChildNodes()) root.removeChild(root.firstChild) }
 
-  function loadElement(element) { root.appendChild(element) }
+  function loadElement(element) { return root.appendChild(element) }
 
   async function getIndexPage() { try {
     clearPage()
+    loadElement(document.createElement('p')).innerHTML = 'Loading...'
     const [indexResponse, titleResponse] = await Promise.all([
       fetch('./api/index.json'),
-      fetch('http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1')
+      fetch(
+        'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
+        { cache: 'no-cache' }
+      )
     ])
     if (indexResponse.status >= 400) throw indexResponse.status
     const [indexJSON, titleJSON] = await Promise.all([
@@ -38,11 +42,13 @@
     indexJSON.data.forEach(videoDataObject => {
       div.appendChild(createGoToVideoButton('/' + videoDataObject.id, videoDataObject.poster))
     })
+    clearPage()
     loadElement(div)
   } catch (e) { getErrorPage(e) } }
 
   async function getSingleVideoPage(url) { try {
     clearPage()
+    loadElement(document.createElement('p')).innerHTML = 'Loading...'
     const response = await fetch(`./api${url}.json`)
     if (response.status >= 400) throw response.status
     const videoData = (await response.json()).data
@@ -50,6 +56,7 @@
     div.appendChild(document.createElement('h1')).innerHTML = url.substring(1)
     div.appendChild(createVideoComponent(videoData))
     div.appendChild(createGoToIndexButton())
+    clearPage()
     loadElement(div)
     window.videojs(document.getElementById(videoData.id))
   } catch(e) { getErrorPage(e) } }

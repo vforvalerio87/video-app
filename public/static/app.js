@@ -3,6 +3,7 @@
 
   const root = document.getElementById('root')
   const initialUrl = document.location.pathname
+  let quotesCache = []
   window.history.replaceState({state: 'initialState'}, '', initialUrl)
   window.onpopstate = (e) => { goToUrl(e.target.location.pathname) }
 
@@ -22,17 +23,27 @@
     loadElement(document.createElement('p')).innerHTML = 'Loading...'
     const [indexResponse, titleResponse] = await Promise.all([
       fetch('./api/index.json'),
-      fetch(
-        'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
-        { cache: 'no-cache' }
-      )
+      (() => {
+        if (!quotesCache.length) { return fetch(
+          'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',
+          { cache: 'no-cache' }
+        )} else { return new Promise(resolve => {
+          resolve(quotesCache)
+        })}
+      })()
     ])
     if (indexResponse.status >= 400) throw indexResponse.status
     const [indexJSON, titleJSON] = await Promise.all([
       indexResponse.json(),
-      titleResponse.json()
+      (() => {
+        if (Array.isArray(titleResponse)) return titleResponse
+        else return titleResponse.json()
+      })()
     ])
-    const { content: quote, title: author } = titleJSON.find(object => object)
+    if (!quotesCache.length) quotesCache = titleJSON
+    const currentQuote = quotesCache[Math.floor(Math.random() * quotesCache.length)]
+    quotesCache = quotesCache.slice(0, quotesCache.indexOf(currentQuote)).concat(quotesCache.slice(quotesCache.indexOf(currentQuote) +1, quotesCache.length))
+    const { content: quote, title: author } = currentQuote
     const div = document.createElement('div')
     if (quote) {
       div.appendChild(document.createElement('h1')).innerHTML = 'Quote of the day'

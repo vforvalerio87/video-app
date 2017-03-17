@@ -41,7 +41,6 @@
     ])
     if (!quotesCache.length) quotesCache = titleJSON
     const currentQuote = quotesCache[Math.floor(Math.random() * quotesCache.length)]
-    console.log(quotesCache)
     quotesCache = quotesCache.slice(0, quotesCache.indexOf(currentQuote)).concat(quotesCache.slice(quotesCache.indexOf(currentQuote) +1, quotesCache.length))
     const { content: quote, title: author } = currentQuote
     const div = document.createElement('div')
@@ -59,7 +58,6 @@
       'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',
       { cache: 'no-cache' }
     )).json()
-    console.log(quotesCache)
   } catch (e) { getErrorPage(e) } }
 
   async function getSingleVideoPage(url) { try {

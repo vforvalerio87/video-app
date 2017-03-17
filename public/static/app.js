@@ -55,6 +55,10 @@
     })
     clearPage()
     loadElement(div)
+    if (!quotesCache.length) quotesCache = await (await fetch(
+          'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',
+          { cache: 'no-cache' }
+        )).json()
   } catch (e) { getErrorPage(e) } }
 
   async function getSingleVideoPage(url) { try {

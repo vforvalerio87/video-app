@@ -21,7 +21,7 @@
   async function getIndexPage() { try {
     clearPage()
     loadElement(document.createElement('p')).innerHTML = 'Loading...'
-    const titlePromise = !quotesCache.length ?
+    const titlePromise = quotesCache.length ?
       quotesCache :
       fetch(
         'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=10',

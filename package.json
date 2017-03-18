@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git+https://github.com/vforvalerio87/video-app.git"
   },
+  "scripts": {
+    "build": "babel public/static/app.js -o build/app.js --preset latest --plugins transform-async-to-generator"
+  },
   "keywords": [],
   "main": "./server.js",
   "author": "",
@@ -15,6 +18,9 @@
   },
   "homepage": "https://github.com/vforvalerio87/video-app#readme",
   "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-plugin-transform-async-to-generator": "^6.22.0",
+    "babel-preset-latest": "^6.24.0",
     "express": "^4.15.2"
   }
 }

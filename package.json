@@ -7,7 +7,7 @@
     "url": "git+https://github.com/vforvalerio87/video-app.git"
   },
   "scripts": {
-    "build": "babel public/static/app.js -o build/app.js --preset latest --plugins transform-async-to-generator"
+    "build": "gulp"
   },
   "keywords": [],
   "main": "./server.js",
@@ -18,9 +18,13 @@
   },
   "homepage": "https://github.com/vforvalerio87/video-app#readme",
   "devDependencies": {
-    "babel-cli": "^6.24.0",
     "babel-plugin-transform-async-to-generator": "^6.22.0",
-    "babel-preset-latest": "^6.24.0",
-    "express": "^4.15.2"
+    "babel-plugin-transform-es2017-object-entries": "0.0.3",
+    "del": "^2.2.2",
+    "express": "^4.15.2",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-polyfiller": "0.0.1"
   }
 }

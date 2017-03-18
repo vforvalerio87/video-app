@@ -19,6 +19,7 @@
   "homepage": "https://github.com/vforvalerio87/video-app#readme",
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.22.0",
+    "babel-preset-babili": "0.0.12",
     "express": "^4.15.2",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2"

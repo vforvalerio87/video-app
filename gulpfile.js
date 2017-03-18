@@ -5,7 +5,7 @@ const babel = require('gulp-babel')
 
 gulp.task('build', () =>
   gulp.src('./public/static/app.js')
-    .pipe(babel({ plugins: ['transform-async-to-generator'] }))
+    .pipe(babel({ plugins: ['transform-async-to-generator'], presets: ['babili'] }))
     .pipe(gulp.dest('build'))
 )
 

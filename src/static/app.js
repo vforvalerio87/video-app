@@ -57,18 +57,22 @@
           const currentQuote = quotesCache[Math.floor(Math.random() * quotesCache.length)]
           quotesCache = quotesCache.slice(0, quotesCache.indexOf(currentQuote)).concat(quotesCache.slice(quotesCache.indexOf(currentQuote) +1, quotesCache.length))
           const { content: quote, title: author } = currentQuote
-          if (quote) resolve({quote, author})
-          else div.appendChild(document.createElement('h1')).innerHTML = 'No quote today :('
+          const div = document.createElement('div')
+          if (quote) {
+            div.appendChild(document.createElement('h1')).innerHTML = 'Quote of the day'
+            div.appendChild(document.createElement('h2')).innerHTML = quote,
+            div.appendChild(document.createElement('h3')).innerHTML = author
+          } else {
+            div.appendChild(document.createElement('h1')).innerHTML = 'No quote today :('
+          }
+          resolve (div)
         }))
 
       Promise.all([indexPromise, quotesPromise])
-        .then(([indexObj, quoteObj]) => {
-          const {quote, author} = quoteObj
+        .then(([videoDivArray, quoteDiv]) => {
           clearPage()
-          div.appendChild(document.createElement('h1')).innerHTML = 'Quote of the day'
-          div.appendChild(document.createElement('h2')).innerHTML = quote
-          if (author) div.appendChild(document.createElement('h3')).innerHTML = author
-          indexObj.forEach(videoButtonElement => {
+          div.appendChild(quoteDiv)
+          videoDivArray.forEach(videoButtonElement => {
             div.appendChild(videoButtonElement)
           })
           loadElement(div)

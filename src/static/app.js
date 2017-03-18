@@ -4,7 +4,7 @@
   if (window.Promise && window.fetch && Object.entries) { main() }
   else {
     const polyfills = document.createElement('script')
-    polyfills.src = 'https://cdn.polyfill.io/v2/polyfill.min.js?features=Object.entries,Promise,fetch'
+    polyfills.setAttribute('src', 'https://cdn.polyfill.io/v2/polyfill.min.js?features=Object.entries,Promise,fetch')
     polyfills.onload = () => { main() }
     polyfills.onerror = () => { main(new Error('Failed to load polyfills')) }
     document.head.appendChild(polyfills)

@@ -4,18 +4,18 @@ const gulp = require('gulp')
 const babel = require('gulp-babel')
 
 gulp.task('build', () =>
-  gulp.src('./public/static/app.js')
+  gulp.src('./src/static/app.js')
     .pipe(babel({ plugins: ['transform-async-to-generator'], presets: ['babili'] }))
     .pipe(gulp.dest('./build/static'))
 )
 
 gulp.task('moveApi', () =>
-  gulp.src('./public/api/*')
+  gulp.src('./src/api/*')
     .pipe(gulp.dest('./build/api'))
 )
 
 gulp.task('moveIndex', () =>
-  gulp.src('./public/index.html')
+  gulp.src('./src/index.html')
     .pipe(gulp.dest('./build'))
 )
 

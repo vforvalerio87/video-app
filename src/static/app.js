@@ -29,36 +29,54 @@
 
     function loadElement(element) { return root.appendChild(element) }
 
-    async function getIndexPage() { try {
+    function getIndexPage() {
       clearPage()
       loadElement(document.createElement('p')).innerHTML = 'Loading...'
       const titlePromise = quotesCache.length ?
         Promise.resolve(new Response(new Blob([JSON.stringify(quotesCache)], {type: 'application/json'}))) :
         fetch(quotesUrl, { cache: 'no-cache' })
-      const [indexJSON, titleJSON] = await Promise.all([
-        fetch('./api/index.json').then(response => {
+      const div = document.createElement('div')
+
+      const indexPromise = fetch('./api/index.json')
+        .then(response => {
           if (response.status >= 400) throw response.status
           return response.json()
-        }),
-        titlePromise.then(response => response.json())
-      ])
-      if (!quotesCache.length) quotesCache = titleJSON
-      const currentQuote = quotesCache[Math.floor(Math.random() * quotesCache.length)]
-      quotesCache = quotesCache.slice(0, quotesCache.indexOf(currentQuote)).concat(quotesCache.slice(quotesCache.indexOf(currentQuote) +1, quotesCache.length))
-      const { content: quote, title: author } = currentQuote
-      const div = document.createElement('div')
-      if (quote) {
-        div.appendChild(document.createElement('h1')).innerHTML = 'Quote of the day'
-        div.appendChild(document.createElement('h2')).innerHTML = quote
-        if (author) div.appendChild(document.createElement('h3')).innerHTML = author
-      } else { div.appendChild(document.createElement('h1')).innerHTML = 'No quote today :(' }
-      indexJSON.data.forEach(videoDataObject => {
-        div.appendChild(createGoToVideoButton('/' + videoDataObject.id, videoDataObject.poster))
-      })
-      clearPage()
-      loadElement(div)
-      if (quotesCache.length <3) quotesCache = await (await fetch(quotesUrl, { cache: 'no-cache' })).json()
-    } catch (e) { getErrorPage(e) } }
+        })
+        .then(indexJSON => new Promise(resolve => {
+          resolve(
+            indexJSON.data.map(videoDataObject =>
+              createGoToVideoButton('/' + videoDataObject.id, videoDataObject.poster)
+            )
+          )
+        }))
+
+      const quotesPromise = titlePromise
+        .then(response => response.json())
+        .then(titleJSON => new Promise(resolve => {
+          if (!quotesCache.length) quotesCache = titleJSON
+          const currentQuote = quotesCache[Math.floor(Math.random() * quotesCache.length)]
+          quotesCache = quotesCache.slice(0, quotesCache.indexOf(currentQuote)).concat(quotesCache.slice(quotesCache.indexOf(currentQuote) +1, quotesCache.length))
+          const { content: quote, title: author } = currentQuote
+          if (quote) resolve({quote, author})
+          else div.appendChild(document.createElement('h1')).innerHTML = 'No quote today :('
+        }))
+
+      Promise.all([indexPromise, quotesPromise])
+        .then(([indexObj, quoteObj]) => {
+          const {quote, author} = quoteObj
+          clearPage()
+          div.appendChild(document.createElement('h1')).innerHTML = 'Quote of the day'
+          div.appendChild(document.createElement('h2')).innerHTML = quote
+          if (author) div.appendChild(document.createElement('h3')).innerHTML = author
+          indexObj.forEach(videoButtonElement => {
+            div.appendChild(videoButtonElement)
+          })
+          loadElement(div)
+          if (quotesCache.length < 3) fetch(quotesUrl, { cache: 'no-cache' })
+            .then(response => response.json())
+            .then(json => {quotesCache = json})
+        })
+    }
 
     async function getSingleVideoPage(url) { try {
       clearPage()

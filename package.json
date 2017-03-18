@@ -6,9 +6,6 @@
     "type": "git",
     "url": "git+https://github.com/vforvalerio87/video-app.git"
   },
-  "scripts": {
-    "build": "gulp"
-  },
   "keywords": [],
   "main": "./server.js",
   "author": "",

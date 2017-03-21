@@ -39,8 +39,8 @@
       const div = document.createElement('div')
 
       const indexPromise = fetch('./api/index.json')
-        .then(response => {
-          if (response.status >= 400) throw response.status
+        .then((response, reject) => {
+          if (response.status >= 400) reject(response.status)
           return response.json()
         })
         .then(indexJSON => new Promise(resolve => {
@@ -81,6 +81,7 @@
             .then(response => response.json())
             .then(json => {quotesCache = json})
         })
+        .catch(error => { getErrorPage(error) })
     }
 
     async function getSingleVideoPage(url) { try {

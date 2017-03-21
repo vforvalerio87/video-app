@@ -10,7 +10,7 @@
     document.head.appendChild(polyfills)
   }
   
-  function main(e) {
+  function main() {
     const root = document.getElementById('root')
     const initialUrl = document.location.pathname
     let quotesCache = []
@@ -32,6 +32,7 @@
     function getIndexPage() {
       clearPage()
       loadElement(document.createElement('p')).innerHTML = 'Loading...'
+
       const titlePromise = quotesCache.length ?
         Promise.resolve(new Response(new Blob([JSON.stringify(quotesCache)], {type: 'application/json'}))) :
         fetch(quotesUrl, { cache: 'no-cache' })

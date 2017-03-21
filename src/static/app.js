@@ -50,6 +50,7 @@
             )
           )
         }))
+        .catch(error => getErrorPage(error))
 
       const quotesPromise = titlePromise
         .then(response => response.json())
@@ -68,6 +69,7 @@
           }
           resolve (div)
         }))
+        .catch(error => getErrorPage(error))
 
       Promise.all([indexPromise, quotesPromise])
         .then(([videoDivArray, quoteDiv]) => {
